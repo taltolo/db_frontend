@@ -1,0 +1,15 @@
+.continer {
+padding: 4rem;
+display: flex;
+flex-direction: column;
+}
+
+.card-continer{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  border: 3px solid black;
+  padding: 10px;
+  border-radius: .5rem;
+}
+

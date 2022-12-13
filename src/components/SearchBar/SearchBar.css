@@ -1,0 +1,11 @@
+.searchBar-continer{
+    margin: 2rem;
+}
+.search-box{
+    outline:  none;
+    width: 100%;
+    border:1px solid gray;
+    font-size:  1rem;
+    padding: 1rem;
+    border-radius: .5rem;
+}
