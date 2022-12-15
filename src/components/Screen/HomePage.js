@@ -3,7 +3,7 @@ import NetworkCard from '../Card/NetworkCard';
 import SearchBar from '../SearchBar/SearchBar';
 import './HomePage.css';
 
-const HomePage = () => {
+export default function HomePage() {
   const [allNetworks, setallNetworks] = useState([]);
   const [filterNetworks, setfilterNetwork] = useState([]);
   const fetchData = useCallback(() => {
@@ -23,12 +23,6 @@ const HomePage = () => {
 
   return (
     <div className="continer">
-      <img
-        src="CEVA_Inc_Logo.svg.png"
-        alt="ceav logo"
-        width={175}
-        height={75}
-      />
       <h1>Arch Planner DataBase.Web</h1>
       <SearchBar
         allNetworks={filterNetworks}
@@ -41,6 +35,4 @@ const HomePage = () => {
       </div>
     </div>
   );
-};
-
-export default HomePage;
+}
