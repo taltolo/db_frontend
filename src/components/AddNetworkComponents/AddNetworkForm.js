@@ -17,10 +17,11 @@ import './AddNetworkForm.css';
 
 const useStyles = makeStyles({
   field: {
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 17,
+    marginBottom: 17,
     display: 'block',
-    justifyItems: 'center',
+    justifyContent: 'center',
+    width: '300px',
   },
 });
 
@@ -32,47 +33,103 @@ const AddNetworkForm = () => {
   const [test, setTest] = useState(0);
   const [weekly, setWeekly] = useState(0);
   const [checkIn, setCheckIn] = useState(0);
-  const [modelPath, setModelPath] = useState('');
+  const [model_path, setModel_path] = useState('');
   const [frequency, setFrequency] = useState(0);
-  const [targetCycles, setTtargetCycles] = useState(0);
-  const [targetOuterBW, setTargetOuterBW] = useState(0);
+  const [target_cycles, setTtargetCycles] = useState(0);
+  const [target_Outer_BW, setTargetOuterBW] = useState(0);
   const [winograd, setWinograd] = useState(false);
   const [sparsity, setSparsity] = useState(0);
-  const [weightCompression, setWeightCompression] = useState(0);
+  const [weight_compression_rate, setWeightCompression] = useState(0);
   const [weightCompressionError, setWeightCompressionError] = useState(false);
   const [sparsityError, setSparsityError] = useState(false);
   const [modelPathError, setModelPathError] = useState(false);
   const [frequencyError, setFrequencyError] = useState(false);
   const [targetCyclesError, setTargetCyclesError] = useState(false);
   const [targetOuterBWError, setTargetOuterBWError] = useState(false);
+  const [addFlag, setAddFlag] = useState(true);
 
   const handeleSubmit = (e) => {
+    let network = {};
     e.preventDefault();
     setModelPathError(false);
     setFrequencyError(false);
     setTargetCyclesError(false);
     setTargetOuterBWError(false);
     setSparsityError(false);
+    setAddFlag(true);
     setWeightCompressionError(false);
     if (sparsity < 0 || sparsity > 1) {
       setSparsityError(true);
+      setAddFlag(false);
     }
-    if (weightCompression < 0 || weightCompression > 1) {
+    if (weight_compression_rate < 0 || weight_compression_rate > 1) {
       setWeightCompressionError(true);
+      setAddFlag(false);
     }
-    if (modelPath === '') {
+    if (model_path === '') {
       setModelPathError(true);
+      setAddFlag(false);
     }
     if (frequency === 0 || frequency < 0) {
       setFrequencyError(true);
+      setAddFlag(false);
     }
-    if (targetCycles < 0) {
+    if (target_cycles < 0) {
       setTargetCyclesError(true);
+      setAddFlag(false);
     }
-    if (targetOuterBW < 0) {
+    if (target_Outer_BW < 0) {
       setTargetOuterBWError(true);
+      setAddFlag(false);
+    }
+    if (addFlag) {
+      network = {
+        DDR: {
+          latency: 0,
+        },
+        L1,
+        L2: {
+          size_MB: L2,
+          bytes_per_cycle_to_DDR: 32,
+        },
+        model_path,
+        sparsity,
+        weight_compression_rate,
+        frequency,
+        winograd,
+        target_cycles,
+        target_Outer_BW,
+        nightly_run: nightlyRun,
+        CheckIn: checkIn,
+        Test: test,
+        Weekly: weekly,
+      };
+      console.log(network);
+      AddNetworkToDB(network);
     }
   };
+  async function AddNetworkToDB(network) {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(network),
+    };
+    try {
+      const response = await fetch(
+        'http://localhost:5000/network/db',
+        requestOptions
+      );
+      if (response) {
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   const handleChangeL1 = (event) => {
     setL1(event.target.value);
   };
@@ -93,10 +150,14 @@ const AddNetworkForm = () => {
   };
 
   return (
-    <div>
-      <h1>add new Network</h1>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        <div className="form-continer">
+    <div style={{ margin: '5rem' }}>
+      <div className="form-continuer">
+        <div className="h1-div">
+          <h1>Add New Network</h1>
+        </div>
+        <Box
+          sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}
+        >
           <FormControl required sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="select-required-L1-label">L1 [MB]</InputLabel>
             <Select
@@ -146,12 +207,16 @@ const AddNetworkForm = () => {
               <div className="textfildLeft">
                 <TextField
                   className={classes.field}
-                  onChange={(e) => setModelPath(e.target.value)}
+                  onChange={(e) => setModel_path(e.target.value)}
                   label="model path"
                   variant="outlined"
                   required
                   error={modelPathError}
-                  sx={{ m: 1, width: '25ch' }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">model.onnx</InputAdornment>
+                    ),
+                  }}
                 />
                 <TextField
                   className={classes.field}
@@ -207,108 +272,121 @@ const AddNetworkForm = () => {
                 />
               </div>
             </div>
-            <FormControl required sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-required-nightlyRun-label">
-                nightly run
-              </InputLabel>
-              <Select
-                labelId="select-required-nightlyRun"
-                id="select-required-nightlyRun"
-                value={nightlyRun}
-                label="nightly run"
-                onChange={handleChangeNightlyRun}
+            <div className="select-radio-div">
+              <div className="div-selects">
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="select-required-nightlyRun-label">
+                    nightly run
+                  </InputLabel>
+                  <Select
+                    labelId="select-required-nightlyRun"
+                    id="select-required-nightlyRun"
+                    value={nightlyRun}
+                    label="nightly run"
+                    onChange={handleChangeNightlyRun}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={0}>0</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+                </FormControl>
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="select-required-test-label">test</InputLabel>
+                  <Select
+                    labelId="select-required-test"
+                    id="select-required-test"
+                    value={test}
+                    label="test"
+                    onChange={handleChangeTest}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={0}>0</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+                </FormControl>
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="select-required-weekly-label">
+                    weekly
+                  </InputLabel>
+                  <Select
+                    labelId="select-required-weekly"
+                    id="select-required-weekly"
+                    value={weekly}
+                    label="weekly"
+                    onChange={handleChangeWeekly}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={0}>0</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+                </FormControl>
+                <FormControl required sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="select-required-checkIn-label">
+                    checkIn
+                  </InputLabel>
+                  <Select
+                    labelId="select-required-checkIn"
+                    id="select-required-checkIn"
+                    value={checkIn}
+                    label="checkIn"
+                    onChange={handleChangeCheckIn}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={0}>0</MenuItem>
+                    <MenuItem value={1}>1</MenuItem>
+                  </Select>
+                  <FormHelperText>Required</FormHelperText>
+                </FormControl>
+              </div>
+              <div className="div-radioGroup">
+                <FormControl>
+                  <FormLabel>Winograd</FormLabel>
+                  <RadioGroup
+                    value={winograd}
+                    onChange={(e) => setWinograd(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="true"
+                      control={<Radio size="small" color="#063970" />}
+                      label="True"
+                    />
+                    <FormControlLabel
+                      value="false"
+                      control={<Radio size="small" color="#063970" />}
+                      label="False"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            </div>
+            <div className="div-button">
+              <Button
+                onClick={handeleSubmit}
+                type="submit"
+                variant="contained"
+                style={{
+                  backgroundColor: '#063970',
+                  color: '#99EC00',
+                }}
+                endIcon={<KeyboardArrowRightIcon />}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-              </Select>
-              <FormHelperText>Required</FormHelperText>
-            </FormControl>
-            <FormControl required sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-required-test-label">test</InputLabel>
-              <Select
-                labelId="select-required-test"
-                id="select-required-test"
-                value={test}
-                label="test"
-                onChange={handleChangeTest}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-              </Select>
-              <FormHelperText>Required</FormHelperText>
-            </FormControl>
-            <FormControl required sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-required-weekly-label">weekly</InputLabel>
-              <Select
-                labelId="select-required-weekly"
-                id="select-required-weekly"
-                value={weekly}
-                label="weekly"
-                onChange={handleChangeWeekly}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-              </Select>
-              <FormHelperText>Required</FormHelperText>
-            </FormControl>
-            <FormControl required sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="select-required-checkIn-label">
-                checkIn
-              </InputLabel>
-              <Select
-                labelId="select-required-checkIn"
-                id="select-required-checkIn"
-                value={checkIn}
-                label="checkIn"
-                onChange={handleChangeCheckIn}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-              </Select>
-              <FormHelperText>Required</FormHelperText>
-            </FormControl>
-            <FormControl className={classes.field}>
-              <FormLabel>Winograd</FormLabel>
-              <RadioGroup
-                value={winograd}
-                onChange={(e) => setWinograd(e.target.value)}
-              >
-                <FormControlLabel
-                  value="true"
-                  control={<Radio size="small" color="#063970" />}
-                  label="True"
-                />
-                <FormControlLabel
-                  value="false"
-                  control={<Radio size="small" color="#063970" />}
-                  label="False"
-                />
-              </RadioGroup>
-            </FormControl>
-            <Button
-              onClick={handeleSubmit}
-              type="submit"
-              variant="contained"
-              style={{ backgroundColor: '#063970', color: '#99EC00' }}
-              endIcon={<KeyboardArrowRightIcon />}
-            >
-              add
-            </Button>
+                add
+              </Button>
+            </div>
           </from>
-        </div>
-      </Box>
+        </Box>
+      </div>
     </div>
   );
 };

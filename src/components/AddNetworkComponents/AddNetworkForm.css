@@ -1,21 +1,56 @@
-.form-continer {
+.form-continuer {
     margin: auto;
     width: 50%;
-    border: 3px solid black;
-    padding: 20px;
-    align-items: center;
+    border: 1px solid black;
+    padding: 30px;
+    border-radius: 1rem;
+    justify-content: center;
+    display: block;
+    
 }
 .from-div{
     display: flex;
-
     align-items: center;
+    justify-content: center;
     
 }
 .textfildRigth{
     display: block;
-    margin: 20px;
+    margin: 1rem 1.5rem 1rem 2rem;
 }
 .textfildLeft{
     display: block;
-    margin: 20px;
+    margin: 1rem 1.5rem 1rem 2rem;
+}
+.div-button{
+    width: 50%;
+    margin: auto;
+    display: grid;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+
+}
+.div-radioGroup{
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+   
+}
+.div-selects{
+    display: flex;
+    align-items: center;
+}
+.select-radio-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.h1-div{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: #99EC00;
+    background-color: #063970;
 }
