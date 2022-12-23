@@ -14,6 +14,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import { useState } from 'react';
 import './AddNetworkForm.css';
+import Swal from 'sweetalert2';
 
 const useStyles = makeStyles({
   field: {
@@ -119,14 +120,24 @@ const AddNetworkForm = () => {
     };
     try {
       const response = await fetch(
-        'http://localhost:5000/network/db',
+        'http://localhost:5000/network/db/',
         requestOptions
       );
       if (response) {
         const data = await response.json();
-        console.log(data);
+        Swal.fire(
+          'Add network successfully!!',
+          `${model_path.split('\\')[2]} added to the DataBase successfully!`,
+          'success'
+        );
       }
     } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: error.message,
+      });
       throw new Error(error);
     }
   }
