@@ -1,18 +1,88 @@
 import './NetworkInformation.css';
-const NetworkInformation = ({ network }) => {
+const NetworkInformation = ({ network, edit }) => {
   return (
     <div className="informtion">
       <ul className="listRoot"></ul>
-      <li>latency: {network.DDR.latency}</li>
-      <li>L1: {network.L1} MB</li>
-      <li>L2: {network.L2.size_MB} MB</li>
-      <li>bytes per cycle to DDR: {network.L2.bytes_per_cycle_to_DDR} MB</li>
-      <li>sparsity: {network.sparsity} </li>
-      <li>weight compression rate: {network.weight_compression_rate} </li>
-      <li>frequency: {network.frequency} </li>
-      <li>winograd: {network.winograd} </li>
-      <li>target cycles: {network.target_cycles} </li>
-      <li>target Outer BW: {network.target_Outer_BW} </li>
+      <li>
+        latency:
+        <input
+          className="filed-input"
+          placeholder={network.DDR.latency}
+          disabled
+        ></input>
+      </li>
+      <li>
+        L1:
+        <input
+          className="filed-input"
+          placeholder={` ${network.L1} MB`}
+          disabled={edit ? false : true}
+        ></input>
+      </li>
+      <li>
+        L2:
+        <input
+          className="filed-input"
+          placeholder={` ${network.L2.size_MB} MB`}
+          disabled
+        ></input>
+      </li>
+      <li>
+        bytes per cycle to DDR:
+        <input
+          className="filed-input"
+          placeholder={` ${network.L2.bytes_per_cycle_to_DDR} MB`}
+          disabled
+        ></input>
+      </li>
+      <li>
+        sparsity:
+        <input
+          className="filed-input"
+          placeholder={network.sparsity}
+          disabled
+        ></input>
+      </li>
+      <li>
+        weight compression rate:
+        <input
+          className="filed-input"
+          placeholder={network.weight_compression_rate}
+          disabled
+        ></input>
+      </li>
+      <li>
+        frequency:
+        <input
+          className="filed-input"
+          placeholder={network.frequency}
+          disabled
+        ></input>
+      </li>
+      <li>
+        winograd:
+        <input
+          className="filed-input"
+          placeholder={network.winograd}
+          disabled
+        ></input>
+      </li>
+      <li>
+        target cycles:
+        <input
+          className="filed-input"
+          placeholder={network.target_cycles}
+          disabled
+        ></input>
+      </li>
+      <li>
+        target Outer BW:
+        <input
+          className="filed-input"
+          placeholder={network.target_Outer_BW}
+          disabled
+        ></input>
+      </li>
     </div>
   );
 };
