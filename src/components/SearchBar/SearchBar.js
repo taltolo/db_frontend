@@ -15,7 +15,7 @@ const SearchBar = ({ allNetworks, onChoice }) => {
         placeholder="Search..."
         onInput={getQuery}
       ></input>
-      <span class="icon">🔍</span>
+      <span className="icon">🔍</span>
     </div>
   );
 };

@@ -120,11 +120,11 @@ const AddNetworkForm = () => {
     };
     try {
       const response = await fetch(
-        'http://localhost:5000/network/db/',
+        'https://db-backend-ap.herokuapp.com',
         requestOptions
       );
       if (response) {
-        const data = await response.json();
+         await response.json();
         Swal.fire(
           'Add network successfully!!',
           `${model_path.split('\\')[2]} added to the DataBase successfully!`,

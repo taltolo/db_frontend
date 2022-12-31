@@ -23,14 +23,16 @@ export default function HomePage() {
 
   return (
     <div className="continer">
+      <div className='box'>
       <h1>Arch Planner DataBase.Web</h1>
       <SearchBar
         allNetworks={filterNetworks}
         onChoice={(filteredNetworks) => setallNetworks(filteredNetworks)}
       />
+      </div>
       <div className="card-continer">
         {allNetworks.map((network, index) => {
-          return <NetworkCard networkData={network} key={network.id} />;
+          return <NetworkCard networkData={network} key={network._id} />;
         })}
       </div>
     </div>

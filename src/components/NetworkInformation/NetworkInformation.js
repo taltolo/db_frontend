@@ -63,7 +63,7 @@ const NetworkInformation = ({ network, edit }) => {
         winograd:
         <input
           className="filed-input"
-          placeholder={network.winograd}
+          placeholder={network.winograd.toString()}
           disabled
         ></input>
       </li>
