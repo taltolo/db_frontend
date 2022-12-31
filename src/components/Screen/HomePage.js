@@ -7,7 +7,7 @@ export default function HomePage() {
   const [allNetworks, setallNetworks] = useState([]);
   const [filterNetworks, setfilterNetwork] = useState([]);
   const fetchData = useCallback(() => {
-    fetch('http://localhost:5000/network/db/', {
+    fetch('https://db-backend-ap.herokuapp.com', {
       mode: 'cors',
     })
       .then((response) => response.json())
