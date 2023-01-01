@@ -1,24 +1,24 @@
 import NetworkInformation from "../NetworkInformation/NetworkInformation";
+import { useState } from 'react';
 import './EditDialog.css'
 
 const EditDialog = ({network, handleClose}) => {
+    let [openDialog,setOpenDialog]=useState(true);
     return(
-        <dialog id="model-network" open> 
+        <dialog id="model-network" className="networkInfo-dialog" open={openDialog} > 
         <article>
             <div className="div-a">
-                 <a 
-            href="/"
-            aria-label="Close"
-            className="close"
-            data-target="model-network"
-            onClick={handleClose}>X</a> 
-            
+                 <button 
+
+            onClick={handleClose}>X</button> 
             </div>
           
-<hgroup>
-    <h2>{network.model_path.split('\\')[2]}</h2>
-<NetworkInformation network={network} edit={null} />
-</hgroup>
+    <hgroup>
+        <h2>{network.model_path.split('\\')[2]}</h2>
+        <div className="networkInfo-dialog">
+    <NetworkInformation network={network} edit={null} />
+        </div>
+    </hgroup>
         </article>
         </dialog>
     );

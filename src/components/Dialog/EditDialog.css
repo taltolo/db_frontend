@@ -1,7 +1,12 @@
 .close{
-    display: block;
-    right: 0;
+    display: flex;
+    flex-direction: row-reverse;
+   
 }
 .div-a{
-    right: 0;
+    display: block;
+
+}
+.networkInfo-dialog{
+    border-radius: 0.5rem;
 }
