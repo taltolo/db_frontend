@@ -1,5 +1,6 @@
+import EditNetworkForm from "../NetworkFormComponents/EditNetworkForm";
 const EditNetwork = () => {
-  return <h1>EditNetwork</h1>;
+  return <EditNetworkForm/>;
 };
 
 export default EditNetwork;

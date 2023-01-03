@@ -6,6 +6,7 @@ import './HomePage.css';
 export default function HomePage() {
   const [allNetworks, setallNetworks] = useState([]);
   const [filterNetworks, setfilterNetwork] = useState([]);
+
   const fetchData = useCallback(() => {
     fetch('https://db-backend-ap.herokuapp.com', {
       mode: 'cors',

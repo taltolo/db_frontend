@@ -13,7 +13,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import { useState } from 'react';
-import './AddNetworkForm.css';
+import './NetworkForm.css';
 import Swal from 'sweetalert2';
 
 const useStyles = makeStyles({
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
 });
 
-const AddNetworkForm = () => {
+const NetworkForm = ({from , networkToEdit}) => {
   const classes = useStyles();
   const [L1, setL1] = useState(0);
   const [L2, setL2] = useState(0);
@@ -39,8 +39,8 @@ const AddNetworkForm = () => {
   const [target_cycles, setTtargetCycles] = useState(0);
   const [target_Outer_BW, setTargetOuterBW] = useState(0);
   const [winograd, setWinograd] = useState(false);
-  const [sparsity, setSparsity] = useState(0);
-  const [weight_compression_rate, setWeightCompression] = useState(0);
+  const [sparsity, setSparsity] = useState(-1);
+  const [weight_compression_rate, setWeightCompression] = useState(-1);
   const [weightCompressionError, setWeightCompressionError] = useState(false);
   const [sparsityError, setSparsityError] = useState(false);
   const [modelPathError, setModelPathError] = useState(false);
@@ -48,6 +48,7 @@ const AddNetworkForm = () => {
   const [targetCyclesError, setTargetCyclesError] = useState(false);
   const [targetOuterBWError, setTargetOuterBWError] = useState(false);
   const [addFlag, setAddFlag] = useState(true);
+  console.log(networkToEdit)
 
   const handeleSubmit = (e) => {
     let network = {};
@@ -57,33 +58,42 @@ const AddNetworkForm = () => {
     setTargetCyclesError(false);
     setTargetOuterBWError(false);
     setSparsityError(false);
-    setAddFlag(true);
+    setAddFlag(false);
     setWeightCompressionError(false);
     if (sparsity < 0 || sparsity > 1) {
       setSparsityError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
     if (weight_compression_rate < 0 || weight_compression_rate > 1) {
       setWeightCompressionError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
     if (model_path === '') {
       setModelPathError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
     if (frequency === 0 || frequency < 0) {
       setFrequencyError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
-    if (target_cycles < 0) {
+    if (target_cycles <= 0) {
       setTargetCyclesError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
-    if (target_Outer_BW < 0) {
+    if (target_Outer_BW <= 0) {
       setTargetOuterBWError(true);
-      setAddFlag(false);
+      setAddFlag(true);
     }
-    if (addFlag) {
+    console.log(addFlag)
+    if(addFlag){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Yod didnt filled all filed!',
+     
+      });
+    }
+    else {
       network = {
         DDR: {
           latency: 0,
@@ -105,7 +115,6 @@ const AddNetworkForm = () => {
         Test: test,
         Weekly: weekly,
       };
-      console.log(network);
       AddNetworkToDB(network);
     }
   };
@@ -164,7 +173,8 @@ const AddNetworkForm = () => {
     <div style={{ margin: '5rem' }}>
       <div className="form-continuer">
         <div className="h1-div">
-          <h1>Add New Network</h1>
+          {from==='Edit Network' ? <h1>Edit Network</h1> :  <h1>Add New Network</h1>}
+         
         </div>
         <Box
           sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}
@@ -174,12 +184,12 @@ const AddNetworkForm = () => {
             <Select
               labelId="select-required-L1"
               id="select-required-L1"
-              value={L1}
-              label="L1 [MB]"
+              value={from==='Edit Network'? networkToEdit.L1 : L1}
+              label= "L1 [MB]"
               onChange={handleChangeL1}
             >
               <MenuItem value="">
-                <em>None</em>
+                 <em>None</em>
               </MenuItem>
               <MenuItem value={1}>1</MenuItem>
               <MenuItem value={2}>2</MenuItem>
@@ -195,7 +205,7 @@ const AddNetworkForm = () => {
             <Select
               labelId="select-required-L2"
               id="select-required-L2"
-              value={L2}
+              value={from==='Edit Network'? networkToEdit.L2.size_MB : L2}
               label="L2 [MB]"
               onChange={handleChangeL2}
             >
@@ -219,7 +229,8 @@ const AddNetworkForm = () => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setModel_path(e.target.value)}
-                  label="model path"
+                  value= {from==='Edit Network'? networkToEdit.model_path: "model path"}
+                  label= {from==='Edit Network'? networkToEdit.model_path: "model path"}
                   variant="outlined"
                   required
                   error={modelPathError}
@@ -232,7 +243,8 @@ const AddNetworkForm = () => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setSparsity(e.target.value)}
-                  label="sparsity"
+                  value= {from==='Edit Network'? networkToEdit.sparsity: "sparsity"}
+                  label={from==='Edit Network'? networkToEdit.sparsity: "sparsity"}
                   variant="outlined"
                   required
                   error={sparsityError}
@@ -245,7 +257,8 @@ const AddNetworkForm = () => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setWeightCompression(e.target.value)}
-                  label="weight compression rate"
+                  value= {from==='Edit Network'? networkToEdit.weight_compression_rate: "weight compression rate"}
+                  label={from==='Edit Network'? networkToEdit.weight_compression_rate: "weight compression rate"}
                   variant="outlined"
                   required
                   error={weightCompressionError}
@@ -260,15 +273,17 @@ const AddNetworkForm = () => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setFrequency(e.target.value)}
-                  label="frequency"
+                  value= {from==='Edit Network'? networkToEdit.frequency : "frequency"}
+                  label={from==='Edit Network'? networkToEdit.frequency : "frequency"}
                   variant="outlined"
                   required
                   error={frequencyError}
                 />
                 <TextField
                   className={classes.field}
+                  value={from==='Edit Network'? networkToEdit.target_cycles : ""}
                   onChange={(e) => setTtargetCycles(e.target.value)}
-                  label="target cycles"
+                  label={from==='Edit Network'? networkToEdit.target_cycles : "target cycles"}
                   variant="outlined"
                   required
                   error={targetCyclesError}
@@ -276,7 +291,9 @@ const AddNetworkForm = () => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setTargetOuterBW(e.target.value)}
-                  label="target Outer BW"
+                  placeholder = "target Outer BW"
+                  value = {from==='Edit Network'? networkToEdit.target_Outer_BW :"target Outer BW"}
+                  label= {from==='Edit Network'? networkToEdit.target_Outer_BW :"target Outer BW"}
                   variant="outlined"
                   required
                   error={targetOuterBWError}
@@ -292,7 +309,7 @@ const AddNetworkForm = () => {
                   <Select
                     labelId="select-required-nightlyRun"
                     id="select-required-nightlyRun"
-                    value={nightlyRun}
+                    value={from==='Edit Network'? networkToEdit.nightly_run : nightlyRun}
                     label="nightly run"
                     onChange={handleChangeNightlyRun}
                   >
@@ -309,7 +326,7 @@ const AddNetworkForm = () => {
                   <Select
                     labelId="select-required-test"
                     id="select-required-test"
-                    value={test}
+                    value={from==='Edit Network'? networkToEdit.Test : test}
                     label="test"
                     onChange={handleChangeTest}
                   >
@@ -328,7 +345,7 @@ const AddNetworkForm = () => {
                   <Select
                     labelId="select-required-weekly"
                     id="select-required-weekly"
-                    value={weekly}
+                    value={from==='Edit Network'? networkToEdit.Weekly : weekly}
                     label="weekly"
                     onChange={handleChangeWeekly}
                   >
@@ -347,7 +364,7 @@ const AddNetworkForm = () => {
                   <Select
                     labelId="select-required-checkIn"
                     id="select-required-checkIn"
-                    value={checkIn}
+                    value={from==='Edit Network'? networkToEdit.CheckIn : checkIn}
                     label="checkIn"
                     onChange={handleChangeCheckIn}
                   >
@@ -364,7 +381,7 @@ const AddNetworkForm = () => {
                 <FormControl>
                   <FormLabel>Winograd</FormLabel>
                   <RadioGroup
-                    value={winograd}
+                    value={from==='Edit Network'? networkToEdit.winograd : winograd}
                     onChange={(e) => setWinograd(e.target.value)}
                   >
                     <FormControlLabel
@@ -402,4 +419,4 @@ const AddNetworkForm = () => {
   );
 };
 
-export default AddNetworkForm;
+export default NetworkForm;

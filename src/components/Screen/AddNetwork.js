@@ -1,4 +1,4 @@
-import AddNetworkForm from '../AddNetworkComponents/AddNetworkForm';
+import AddNetworkForm from '../NetworkFormComponents/NetworkForm';
 const AddNetwork = () => {
   return (
     <>
