@@ -54,3 +54,7 @@
     color: #99EC00;
     background-color: #063970;
 }
+.div-button-edit-delete{
+    display: flex;
+    justify-content: space-around;
+}

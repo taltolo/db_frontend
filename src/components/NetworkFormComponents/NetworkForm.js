@@ -2,6 +2,8 @@ import Button from '@material-ui/core/Button';
 import Box from '@mui/material/Box';
 import TextField from '@material-ui/core/TextField';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import SaveAsSharpIcon from '@mui/icons-material/SaveAsSharp';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { FormControlLabel, makeStyles } from '@material-ui/core';
@@ -28,17 +30,17 @@ const useStyles = makeStyles({
 
 const NetworkForm = ({from , networkToEdit}) => {
   const classes = useStyles();
-  const [L1, setL1] = useState(0);
-  const [L2, setL2] = useState(0);
-  const [nightlyRun, setNightlyRun] = useState(0);
-  const [test, setTest] = useState(0);
-  const [weekly, setWeekly] = useState(0);
-  const [checkIn, setCheckIn] = useState(0);
-  const [model_path, setModel_path] = useState(networkToEdit?.model_path);
+  const [L1, setL1] = useState(networkToEdit?.L1 || 0);
+  const [L2, setL2] = useState(networkToEdit?.L2.size_MB || 0);
+  const [nightlyRun, setNightlyRun] = useState(networkToEdit?.nightlyRun || 0);
+  const [test, setTest] = useState(networkToEdit?.test || 0);
+  const [weekly, setWeekly] = useState(networkToEdit?.weekly || 0);
+  const [checkIn, setCheckIn] = useState(networkToEdit?.checkIn || 0);
+  const [model_path, setModel_path] = useState(networkToEdit?.model_path || "");
   const [frequency, setFrequency] = useState(networkToEdit?.frequency);
   const [target_cycles, setTtargetCycles] = useState(networkToEdit?.target_cycles);
   const [target_Outer_BW, setTargetOuterBW] = useState(networkToEdit?.target_Outer_BW);
-  const [winograd, setWinograd] = useState(false);
+  const [winograd, setWinograd] = useState(networkToEdit?.winograd || false);
   const [sparsity, setSparsity] = useState(networkToEdit?.sparsity);
   const [weight_compression_rate, setWeightCompression] = useState(networkToEdit?.weight_compression_rate);
   const [weightCompressionError, setWeightCompressionError] = useState(false);
@@ -52,45 +54,8 @@ const NetworkForm = ({from , networkToEdit}) => {
 
   const handeleSubmit = (e) => {
     let network = {};
-    let errorMessage = "error value for:";
     e.preventDefault();
-    setModelPathError(false);
-    setFrequencyError(false);
-    setTargetCyclesError(false);
-    setTargetOuterBWError(false);
-    setSparsityError(false);
-    let addFlag =false;
-    setWeightCompressionError(false);
-    if (isNaN(Number(sparsity)) || sparsity < 0 || sparsity > 1) {
-      setSparsityError(true);
-      errorMessage += " sparsity"
-      addFlag =true;
-    }
-    if (isNaN(Number(weight_compression_rate)) || weight_compression_rate < 0 || weight_compression_rate > 1) {
-      setWeightCompressionError(true);
-      addFlag =true;
-      errorMessage+=" weight compression rate"
-    }
-    if (model_path === '') {
-      setModelPathError(true);
-      addFlag =true;
-    }
-    if (isNaN(Number(frequency)) || frequency === 0 || frequency < 0) {
-      setFrequencyError(true);
-      addFlag =true;
-      errorMessage+= " frequency"
-    }
-    if (isNaN(Number(target_cycles)) || target_cycles <= 0) {
-      setTargetCyclesError(true);
-      addFlag =true;
-      errorMessage+= " target cycles"
-    }
-    if (isNaN(Number(target_Outer_BW)) || target_Outer_BW <= 0) {
-      setTargetOuterBWError(true);
-      addFlag =true;
-      errorMessage+= " target Outer BW"
-    }
-    console.log(addFlag)
+    let {addFlag,errorMessage} = vlidateInput();
     if(addFlag){
       Swal.fire({
         icon: 'error',
@@ -175,6 +140,143 @@ const NetworkForm = ({from , networkToEdit}) => {
   const handleChangeCheckIn = (event) => {
     setCheckIn(event.target.value);
   };
+
+  function vlidateInput() {
+    let errorMessage = "error value for:";
+    setModelPathError(false);
+    setFrequencyError(false);
+    setTargetCyclesError(false);
+    setTargetOuterBWError(false);
+    setSparsityError(false);
+    let addFlag =false;
+    setWeightCompressionError(false);
+    if (isNaN(Number(sparsity)) || sparsity < 0 || sparsity > 1) {
+      setSparsityError(true);
+      errorMessage += " sparsity"
+      addFlag =true;
+    }
+    if (isNaN(Number(weight_compression_rate)) || weight_compression_rate < 0 || weight_compression_rate > 1) {
+      setWeightCompressionError(true);
+      addFlag =true;
+      errorMessage+=" weight compression rate"
+    }
+    if (model_path === '' || model_path.length<1) {
+      setModelPathError(true);
+      errorMessage+=" model path"
+      addFlag =true;
+    }
+    if (isNaN(Number(frequency)) || frequency === 0 || frequency < 0) {
+      setFrequencyError(true);
+      addFlag =true;
+      errorMessage+= " frequency"
+    }
+    if (isNaN(Number(target_cycles)) || target_cycles <= 0) {
+      setTargetCyclesError(true);
+      addFlag =true;
+      errorMessage+= " target cycles"
+    }
+    if (isNaN(Number(target_Outer_BW)) || target_Outer_BW <= 0) {
+      setTargetOuterBWError(true);
+      addFlag =true;
+      errorMessage+= " target Outer BW"
+    }
+    return {addFlag,errorMessage};
+  }
+
+  const updateNetwork = (e) =>  {
+    let{addFlag,errorMessage}=vlidateInput();
+    if(addFlag){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errorMessage,
+     
+      });
+    }
+    else{
+    let updateNetwork=checkTheChanges();
+    updateNetworkInDB(updateNetwork);
+  
+  }
+  }
+
+  async function updateNetworkInDB(updateNetwork){
+    const requestOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(updateNetwork),
+    };
+    try {
+      const response = await fetch(
+        'https://db-backend-ap.herokuapp.com/'+networkToEdit._id,
+        requestOptions
+      );
+      if (response) {
+         await response.json();
+        Swal.fire(
+          'Edit network successfully!!',
+          `${model_path.split('\\')[2]} added to the DataBase successfully!`,
+          'success'
+        );
+
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: error.message,
+      });
+      throw new Error(error);
+    }
+  }
+
+  function checkTheChanges(){
+    let updateValues={};
+    if(L1!==networkToEdit.L1){
+      updateValues["L1"]=L1;
+    }
+    if(L2!==networkToEdit.L2.size_MB ){
+      updateValues["L2"]["size_MB"]=L2;
+    }
+    if(model_path!==networkToEdit.model_path){
+      updateValues["model_path"]=model_path;
+    }
+    if(sparsity!==networkToEdit.sparsity){
+      updateValues["sparsity"]=sparsity;
+    }
+    if(weight_compression_rate!==networkToEdit.weight_compression_rate){
+      updateValues["weight_compression_rate"]=weight_compression_rate;
+    }
+    if(frequency!==networkToEdit.frequency){
+      updateValues["frequency"]=frequency;
+    }
+    if(target_cycles!==networkToEdit.target_cycles){
+      updateValues["target_cycles"]=target_cycles;
+    }
+    if(target_Outer_BW!==networkToEdit.target_Outer_BW){
+      updateValues["target_Outer_BW"]=target_Outer_BW;
+    }
+    if(nightlyRun!==networkToEdit.nightlyRun){
+      updateValues["nightlyRun"]=nightlyRun;
+    }
+    if(test!==networkToEdit.test){
+      updateValues["test"]=test;
+    }
+    if(weekly!==networkToEdit.weekly){
+      updateValues["weekly"]=weekly;
+    }
+    if(checkIn!==networkToEdit.checkIn){
+      updateValues["checkIn"]=checkIn;
+    }
+    if(winograd!==networkToEdit.winograd){
+      updateValues["winograd"]=winograd;
+    }
+    return updateValues;
+  }
 
   function cleanFiled() {
     setL1(0);
@@ -434,6 +536,30 @@ const NetworkForm = ({from , networkToEdit}) => {
               </div>
             </div>
             <div className="div-button">
+              {from==='Edit Network' ? 
+            <div className='div-button-edit-delete'>
+              <Button
+               variant="contained"
+               style={{
+               backgroundColor: '#063970',
+               color: '#99EC00',
+               width: 150
+               }}
+               type="submit"
+               onClick={updateNetwork}
+               endIcon={<SaveAsSharpIcon/>}
+              >save</Button>
+              <Button
+                variant="contained"
+                style={{
+                backgroundColor: '#99EC00 ',
+                color: '#063970',
+                width: 150,
+                }}
+                endIcon={<DeleteForeverRoundedIcon fontSize='large'/>}
+              >delete</Button>
+            </div>  
+            :
               <Button
                 onClick={handeleSubmit}
                 type="submit"
@@ -446,6 +572,9 @@ const NetworkForm = ({from , networkToEdit}) => {
               >
                 add
               </Button>
+            
+            }
+            
             </div>
           </from>
         </Box>
