@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     marginBottom: 17,
     display: 'block',
     justifyContent: 'center',
-    width: '300px',
+    width: '20rem',
   },
 });
 
@@ -34,13 +34,13 @@ const NetworkForm = ({from , networkToEdit}) => {
   const [test, setTest] = useState(0);
   const [weekly, setWeekly] = useState(0);
   const [checkIn, setCheckIn] = useState(0);
-  const [model_path, setModel_path] = useState('');
-  const [frequency, setFrequency] = useState(0);
-  const [target_cycles, setTtargetCycles] = useState(0);
-  const [target_Outer_BW, setTargetOuterBW] = useState(0);
+  const [model_path, setModel_path] = useState(networkToEdit?.model_path);
+  const [frequency, setFrequency] = useState(networkToEdit?.frequency);
+  const [target_cycles, setTtargetCycles] = useState(networkToEdit?.target_cycles);
+  const [target_Outer_BW, setTargetOuterBW] = useState(networkToEdit?.target_Outer_BW);
   const [winograd, setWinograd] = useState(false);
-  const [sparsity, setSparsity] = useState(-1);
-  const [weight_compression_rate, setWeightCompression] = useState(-1);
+  const [sparsity, setSparsity] = useState(networkToEdit?.sparsity);
+  const [weight_compression_rate, setWeightCompression] = useState(networkToEdit?.weight_compression_rate);
   const [weightCompressionError, setWeightCompressionError] = useState(false);
   const [sparsityError, setSparsityError] = useState(false);
   const [modelPathError, setModelPathError] = useState(false);
@@ -228,43 +228,49 @@ const NetworkForm = ({from , networkToEdit}) => {
               <div className="textfildLeft">
                 <TextField
                   className={classes.field}
+                  fullWidth
                   onChange={(e) => setModel_path(e.target.value)}
-                  value= {from==='Edit Network'? networkToEdit.model_path: "model path"}
-                  label= {from==='Edit Network'? networkToEdit.model_path: "model path"}
+                  defultvalue= {networkToEdit?.model_path}
+                  value={model_path}
+                  label= "model path"
                   variant="outlined"
                   required
                   error={modelPathError}
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">model.onnx</InputAdornment>
+                      <InputAdornment position="end"></InputAdornment>
                     ),
                   }}
                 />
                 <TextField
                   className={classes.field}
                   onChange={(e) => setSparsity(e.target.value)}
-                  value= {from==='Edit Network'? networkToEdit.sparsity: "sparsity"}
-                  label={from==='Edit Network'? networkToEdit.sparsity: "sparsity"}
+                  defultvalue= {networkToEdit?.sparsity}
+                  value = {sparsity}
+                  label="sparsity"
                   variant="outlined"
                   required
+                  fullWidth
                   error={sparsityError}
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">0.0-1.0</InputAdornment>
+                      <InputAdornment position="end"></InputAdornment>
                     ),
                   }}
                 />
                 <TextField
                   className={classes.field}
                   onChange={(e) => setWeightCompression(e.target.value)}
-                  value= {from==='Edit Network'? networkToEdit.weight_compression_rate: "weight compression rate"}
-                  label={from==='Edit Network'? networkToEdit.weight_compression_rate: "weight compression rate"}
+                  defultvalue= {networkToEdit?.weight_compression_rate}
+                  value= {weight_compression_rate}
+                  label= "weight compression rate"
                   variant="outlined"
                   required
+                  fullWidth
                   error={weightCompressionError}
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">0.0-1.0</InputAdornment>
+                      <InputAdornment position="end"></InputAdornment>
                     ),
                   }}
                 />
@@ -273,29 +279,35 @@ const NetworkForm = ({from , networkToEdit}) => {
                 <TextField
                   className={classes.field}
                   onChange={(e) => setFrequency(e.target.value)}
-                  value= {from==='Edit Network'? networkToEdit.frequency : "frequency"}
-                  label={from==='Edit Network'? networkToEdit.frequency : "frequency"}
+                  defultvalue= {networkToEdit?.frequency }
+                  value={frequency}
+                  label="frequency"
                   variant="outlined"
                   required
+                  fullWidth
                   error={frequencyError}
                 />
                 <TextField
                   className={classes.field}
-                  value={from==='Edit Network'? networkToEdit.target_cycles : ""}
+                  defultvalue= { networkToEdit?.target_cycles}
+                  value={target_cycles}
                   onChange={(e) => setTtargetCycles(e.target.value)}
-                  label={from==='Edit Network'? networkToEdit.target_cycles : "target cycles"}
+                  label= "target cycles"
                   variant="outlined"
                   required
+                  fullWidth
                   error={targetCyclesError}
                 />
                 <TextField
                   className={classes.field}
                   onChange={(e) => setTargetOuterBW(e.target.value)}
-                  placeholder = "target Outer BW"
-                  value = {from==='Edit Network'? networkToEdit.target_Outer_BW :"target Outer BW"}
-                  label= {from==='Edit Network'? networkToEdit.target_Outer_BW :"target Outer BW"}
+                 
+                  defultvalue = {networkToEdit?.target_Outer_BW}
+                  value = {target_Outer_BW}
+                  label= "target Outer BW"
                   variant="outlined"
                   required
+                  fullWidth
                   error={targetOuterBWError}
                 />
               </div>
@@ -381,7 +393,7 @@ const NetworkForm = ({from , networkToEdit}) => {
                 <FormControl>
                   <FormLabel>Winograd</FormLabel>
                   <RadioGroup
-                    value={from==='Edit Network'? networkToEdit.winograd : winograd}
+                    defaultValue={from==='Edit Network'? networkToEdit.winograd? "true": "false" : ""}
                     onChange={(e) => setWinograd(e.target.value)}
                   >
                     <FormControlLabel
