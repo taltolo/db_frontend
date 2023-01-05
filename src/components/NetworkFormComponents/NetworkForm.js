@@ -47,49 +47,55 @@ const NetworkForm = ({from , networkToEdit}) => {
   const [frequencyError, setFrequencyError] = useState(false);
   const [targetCyclesError, setTargetCyclesError] = useState(false);
   const [targetOuterBWError, setTargetOuterBWError] = useState(false);
-  const [addFlag, setAddFlag] = useState(true);
-  console.log(networkToEdit)
+  
+
 
   const handeleSubmit = (e) => {
     let network = {};
+    let errorMessage = "error value for:";
     e.preventDefault();
     setModelPathError(false);
     setFrequencyError(false);
     setTargetCyclesError(false);
     setTargetOuterBWError(false);
     setSparsityError(false);
-    setAddFlag(false);
+    let addFlag =false;
     setWeightCompressionError(false);
-    if (sparsity < 0 || sparsity > 1) {
+    if (isNaN(Number(sparsity)) || sparsity < 0 || sparsity > 1) {
       setSparsityError(true);
-      setAddFlag(true);
+      errorMessage += " sparsity"
+      addFlag =true;
     }
-    if (weight_compression_rate < 0 || weight_compression_rate > 1) {
+    if (isNaN(Number(weight_compression_rate)) || weight_compression_rate < 0 || weight_compression_rate > 1) {
       setWeightCompressionError(true);
-      setAddFlag(true);
+      addFlag =true;
+      errorMessage+=" weight compression rate"
     }
     if (model_path === '') {
       setModelPathError(true);
-      setAddFlag(true);
+      addFlag =true;
     }
-    if (frequency === 0 || frequency < 0) {
+    if (isNaN(Number(frequency)) || frequency === 0 || frequency < 0) {
       setFrequencyError(true);
-      setAddFlag(true);
+      addFlag =true;
+      errorMessage+= " frequency"
     }
-    if (target_cycles <= 0) {
+    if (isNaN(Number(target_cycles)) || target_cycles <= 0) {
       setTargetCyclesError(true);
-      setAddFlag(true);
+      addFlag =true;
+      errorMessage+= " target cycles"
     }
-    if (target_Outer_BW <= 0) {
+    if (isNaN(Number(target_Outer_BW)) || target_Outer_BW <= 0) {
       setTargetOuterBWError(true);
-      setAddFlag(true);
+      addFlag =true;
+      errorMessage+= " target Outer BW"
     }
     console.log(addFlag)
     if(addFlag){
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Yod didnt filled all filed!',
+        text: errorMessage,
      
       });
     }
@@ -139,6 +145,7 @@ const NetworkForm = ({from , networkToEdit}) => {
           `${model_path.split('\\')[2]} added to the DataBase successfully!`,
           'success'
         );
+        cleanFiled();
       }
     } catch (error) {
       Swal.fire({
@@ -168,6 +175,22 @@ const NetworkForm = ({from , networkToEdit}) => {
   const handleChangeCheckIn = (event) => {
     setCheckIn(event.target.value);
   };
+
+  function cleanFiled() {
+    setL1(0);
+    setL2(0);
+    setNightlyRun(0);
+    setTest(0);
+    setWeekly(0);
+    setCheckIn(0);
+    setModel_path('');
+    setFrequency('');
+    setTtargetCycles('');
+    setTargetOuterBW('');
+    setWinograd('');
+    setSparsity('');
+    setWeightCompression('');
+  }
 
   return (
     <div style={{ margin: '5rem' }}>
