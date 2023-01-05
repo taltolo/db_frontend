@@ -17,6 +17,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import { useState } from 'react';
 import './NetworkForm.css';
 import Swal from 'sweetalert2';
+import { useNavigate} from 'react-router-dom';
 
 const useStyles = makeStyles({
   field: {
@@ -49,6 +50,7 @@ const NetworkForm = ({from , networkToEdit}) => {
   const [frequencyError, setFrequencyError] = useState(false);
   const [targetCyclesError, setTargetCyclesError] = useState(false);
   const [targetOuterBWError, setTargetOuterBWError] = useState(false);
+  const navigate = useNavigate();
   
 
 
@@ -276,6 +278,59 @@ const NetworkForm = ({from , networkToEdit}) => {
       updateValues["winograd"]=winograd;
     }
     return updateValues;
+  }
+
+  const deleteNetwork = (e) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteFormDB(networkToEdit._id);
+        Swal.fire(
+          'Deleted!',
+          'The Network has been deleted.',
+          'success'
+        )
+      }
+      navigate('/');
+    })
+    
+  }
+
+  async function deleteFormDB(id){
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(updateNetwork),
+    };
+    try {
+      const response = await fetch(
+        'https://db-backend-ap.herokuapp.com/'+id,
+        requestOptions
+      );
+      if (response) {
+        await response.json();
+        return;
+
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: error.message,
+      });
+      throw new Error(error);
+    }
   }
 
   function cleanFiled() {
@@ -556,6 +611,8 @@ const NetworkForm = ({from , networkToEdit}) => {
                 color: '#063970',
                 width: 150,
                 }}
+                type="submit"
+                onClick={deleteNetwork}
                 endIcon={<DeleteForeverRoundedIcon fontSize='large'/>}
               >delete</Button>
             </div>  

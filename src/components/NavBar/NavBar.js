@@ -14,7 +14,6 @@ const NavBar = () => {
       <ul>
         <CustomLink to="/">Home</CustomLink>
         <CustomLink to="/addNetwork">Add Network</CustomLink>
-        <CustomLink to="/deleteNetwork">Delete Network</CustomLink>
         <CustomLink to="/createJson">Create Json</CustomLink>
       </ul>
     </nav>
