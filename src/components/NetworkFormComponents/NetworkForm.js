@@ -109,7 +109,7 @@ const NetworkForm = ({from , networkToEdit}) => {
          await response.json();
         Swal.fire(
           'Add network successfully!!',
-          `${model_path.split('\\')[2]} added to the DataBase successfully!`,
+          `${model_path.split(/(\\|\/)/g).pop()} added to the DataBase successfully!`,
           'success'
         );
         cleanFiled();
@@ -220,7 +220,7 @@ const NetworkForm = ({from , networkToEdit}) => {
          await response.json();
         Swal.fire(
           'Edit network successfully!!',
-          `${model_path.split('\\')[2]} added to the DataBase successfully!`,
+          `${model_path.split(/(\\|\/)/g).pop()} added to the DataBase successfully!`,
           'success'
         );
 
