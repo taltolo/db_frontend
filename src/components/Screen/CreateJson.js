@@ -7,7 +7,6 @@ const CreateJson = () => {
   const [allNetworks, setallNetworks] = useState([]);
   const [filterNetworks, setfilterNetwork] = useState([]);
   const [listNetwork, setListNetwork] = useState([]);
-  const json = {"name": 'tal'}
 
   const fetchData = useCallback(() => {
     fetch('https://db-backend-ap.herokuapp.com', {
